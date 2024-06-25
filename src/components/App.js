@@ -8,12 +8,14 @@ import Question from "./Question";
 
 // initial state
 const initialState = {
-  // these are piece of state
+  // these are pieces of state
   questions: [],
 
   // 'loading', 'error', 'ready', 'active', 'finished'
   status: "loading",
   currentIndex: 0,
+  answer: null,
+  points: 0,
 };
 
 // reducer function
@@ -25,6 +27,18 @@ function reducer(state, action) {
       return { ...state, status: "error" };
     case "start":
       return { ...state, status: "active" };
+    case "newAnswer":
+      // current question
+      const question = state.questions.at(state.index);
+
+      return {
+        ...state,
+        answer: action.payload,
+        points:
+          action.payload === question.correctOption
+            ? state.points + question.points
+            : state.points,
+      };
     default:
       throw new Error(`Action unknown...`);
   }
@@ -53,7 +67,11 @@ function App() {
             <StartScreen numQuestions={numQuestions} dispatch={dispatch} />
           )}
           {state.status === "active" && (
-            <Question question={state.questions[state.currentIndex]} />
+            <Question
+              question={state.questions[state.currentIndex]}
+              dispatch={dispatch}
+              answer={state.answer}
+            />
           )}
         </Main>
       </div>
