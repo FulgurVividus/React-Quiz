@@ -1,4 +1,5 @@
 import { useEffect, useReducer } from "react";
+
 import Header from "./Header";
 import Main from "./Main";
 import Loader from "./Loader";
@@ -8,6 +9,10 @@ import Question from "./Question";
 import NextButton from "./NextButton";
 import Progress from "./Progress";
 import FinishScreen from "./FinishScreen";
+import Footer from "./Footer";
+import Timer from "./Timer";
+
+const SECS_PER_QUESTION = 30;
 
 // initial state
 const initialState = {
@@ -20,6 +25,7 @@ const initialState = {
   answer: null,
   points: 0,
   highscore: 0,
+  secondsRemaining: null,
 };
 
 // reducer function
@@ -30,7 +36,11 @@ function reducer(state, action) {
     case "dataFailed":
       return { ...state, status: "error" };
     case "start":
-      return { ...state, status: "active" };
+      return {
+        ...state,
+        status: "active",
+        secondsRemaining: state.questions.length * SECS_PER_QUESTION,
+      };
     case "newAnswer":
       // current question
       const question = state.questions.at(state.currentIndex);
@@ -54,6 +64,12 @@ function reducer(state, action) {
       };
     case "restart":
       return { ...initialState, questions: state.questions, status: "ready" };
+    case "timer":
+      return {
+        ...state,
+        secondsRemaining: state.secondsRemaining - 1,
+        status: state.secondsRemaining === 0 ? "finish" : state.status,
+      };
     default:
       throw new Error(`Action unknown...`);
   }
@@ -100,15 +116,21 @@ function App() {
                 dispatch={dispatch}
                 answer={state.answer}
               />
-              <NextButton
-                dispatch={dispatch}
-                answer={state.answer}
-                currentIndex={state.currentIndex}
-                numQuestions={numQuestions}
-              />
+              <Footer>
+                <Timer
+                  dispatch={dispatch}
+                  secondsRemaining={state.secondsRemaining}
+                />
+                <NextButton
+                  dispatch={dispatch}
+                  answer={state.answer}
+                  currentIndex={state.currentIndex}
+                  numQuestions={numQuestions}
+                />
+              </Footer>
             </>
           )}
-          {state.status === "finished" && (
+          {state.status === "finish" && (
             <FinishScreen
               points={state.points}
               maxPossiblePoints={maxPossiblePoints}
