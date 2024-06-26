@@ -1,5 +1,7 @@
 # React Quiz ⚛📝
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/6175ec1a-1f75-408e-8ae3-5d1ccc1b687b/deploy-status)](https://app.netlify.com/sites/fulgur-vividus-react-quiz/deploys)
+
 ## Overview 😌
 
 React Quiz is an interactive quiz application built using React and developed with `npx create-react-app`. The primary focus of this project is to practice the use of the `useReducer` hook, a powerful tool for managing complex state logic in React applications. The quiz consists of 15 questions about React, testing the user's knowledge and understanding of the library.
